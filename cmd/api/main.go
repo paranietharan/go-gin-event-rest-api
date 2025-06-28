@@ -3,9 +3,16 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"go-gin-event-rest-api/internal/database"
 	"go-gin-event-rest-api/internal/env"
 	"log"
 )
+
+type application struct {
+	port      int
+	jwtSecret string
+	models    database.Models
+}
 
 func main() {
 	host := env.GetEnvString("HOST", "localhost")
