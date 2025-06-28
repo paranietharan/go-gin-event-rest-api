@@ -6,6 +6,8 @@ import (
 	"go-gin-event-rest-api/internal/database"
 	"go-gin-event-rest-api/internal/env"
 	"log"
+
+	_ "github.com/lib/pq"
 )
 
 type application struct {
@@ -35,5 +37,16 @@ func main() {
 	err = db.Ping()
 	if err != nil {
 		log.Fatalf("Failed to ping DB: %v", err)
+	}
+
+	models := database.NewModels(db)
+	app := &application{
+		port:      env.GetEnvInt("PORT", 8080),
+		jwtSecret: env.GetEnvString("JWT_SECRET", "some-secret-123456"),
+		models:    models,
+	}
+
+	if err := app.serve(); err != nil {
+		log.Fatal(err)
 	}
 }
