@@ -1,1 +1,32 @@
 package main
+
+import (
+	"database/sql"
+	"fmt"
+	"go-gin-event-rest-api/internal/env"
+	"log"
+)
+
+func main() {
+	host := env.GetEnvString("HOST", "localhost")
+	port := env.GetEnvInt("PORT", 5432)
+	user := env.GetEnvString("USER", "postgres")
+	password := env.GetEnvString("PASSWORD", "root")
+	dbname := env.GetEnvString("DB_NAME", "event_db")
+
+	psqlInfo := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname,
+	)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		log.Fatalf("Failed to open DB connection: %v", err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("Failed to ping DB: %v", err)
+	}
+}
